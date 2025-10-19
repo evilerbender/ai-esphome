@@ -1,0 +1,30 @@
+substitutions:
+  device_name: living-room-sensor
+  friendly_name: "Living Room Sensor"
+  board: esp32dev
+  sensor_pin: GPIO15
+
+packages:
+  base: !include ../common/base.yaml
+  wifi: !include ../common/wifi.yaml
+  sensor_dht22: !include ../common/sensors/dht22.yaml
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+    id: device_status
+
+sensor:
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    id: wifi_signal_sensor
+    update_interval: 60s
+
+  - platform: uptime
+    name: "${friendly_name} Uptime"
+    id: uptime_sensor
+
+button:
+  - platform: restart
+    name: "${friendly_name} Restart"
+    id: restart_button

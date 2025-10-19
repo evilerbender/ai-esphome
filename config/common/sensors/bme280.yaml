@@ -1,0 +1,21 @@
+i2c:
+  sda: ${i2c_sda_pin}
+  scl: ${i2c_scl_pin}
+  scan: true
+  id: i2c_bus
+
+sensor:
+  - platform: bme280_i2c
+    i2c_id: i2c_bus
+    temperature:
+      name: "${friendly_name} Temperature"
+      id: temperature_sensor
+      oversampling: 16x
+    pressure:
+      name: "${friendly_name} Pressure"
+      id: pressure_sensor
+    humidity:
+      name: "${friendly_name} Humidity"
+      id: humidity_sensor
+    address: 0x76
+    update_interval: 60s

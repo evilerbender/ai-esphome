@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+CONVENTIONAL_TYPES="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .{1,}"
+
+if echo "$COMMIT_MSG" | grep -Eq "$CONVENTIONAL_TYPES"; then
+    exit 0
+fi
+
+if echo "$COMMIT_MSG" | grep -Eq "^Merge|^Revert|^Initial commit"; then
+    exit 0
+fi
+
+echo "❌ Invalid commit message format!"
+echo ""
+echo "Commit message must follow Conventional Commits format:"
+echo ""
+echo "  <type>[optional scope]: <description>"
+echo ""
+echo "Types:"
+echo "  feat:     New feature"
+echo "  fix:      Bug fix"
+echo "  docs:     Documentation changes"
+echo "  style:    Code style changes (formatting, etc.)"
+echo "  refactor: Code refactoring"
+echo "  perf:     Performance improvements"
+echo "  test:     Adding or updating tests"
+echo "  build:    Build system changes"
+echo "  ci:       CI/CD changes"
+echo "  chore:    Other changes (dependencies, config, etc.)"
+echo ""
+echo "Examples:"
+echo "  feat: add BME680 sensor support"
+echo "  fix(wifi): resolve connection timeout issue"
+echo "  docs: update README with new device instructions"
+echo ""
+echo "Your commit message:"
+echo "  $COMMIT_MSG"
+echo ""
+
+exit 1

@@ -1,0 +1,67 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+      - id: end-of-file-fixer
+        name: Fix end of files
+      - id: check-yaml
+        name: Check YAML syntax
+        exclude: 'config/.*\.yaml$'
+      - id: check-added-large-files
+        name: Check for large files
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+      - id: mixed-line-ending
+        name: Fix mixed line endings
+        args: ['--fix=lf']
+      - id: detect-private-key
+        name: Detect private keys
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.7
+    hooks:
+      - id: ruff
+        name: Run Ruff linter
+        args: [--fix]
+        types_or: [python, pyi]
+      - id: ruff-format
+        name: Run Ruff formatter
+        types_or: [python, pyi]
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        name: Lint YAML files
+        args:
+          - --strict
+          - -d
+          - '{extends: default, rules: {line-length: {max: 120}}}'
+        exclude: 'config/.*\.yaml$'
+
+  - repo: local
+    hooks:
+      - id: esphome-config-validate
+        name: Validate ESPHome configs
+        entry: hooks/validate-esphome-configs.sh
+        language: script
+        files: 'config/devices/.*\.yaml$'
+        pass_filenames: false
+        verbose: true
+
+      - id: secrets-check
+        name: Check for secrets in YAML
+        entry: hooks/check-secrets.sh
+        language: script
+        files: '\.yaml$'
+        verbose: true
+
+      - id: no-direct-commit-secrets
+        name: Prevent committing secrets.yaml
+        entry: 'secrets.yaml should never be committed'
+        language: fail
+        files: 'secrets\.yaml$'

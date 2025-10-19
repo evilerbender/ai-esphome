@@ -1,0 +1,32 @@
+---
+version: '3'
+services:
+  esphome:
+    container_name: esphome
+    image: python:3.11-slim
+    volumes:
+      - ./config:/config
+      - ./pyproject.toml:/app/pyproject.toml:ro
+      - ./.python-version:/app/.python-version:ro
+      - /etc/localtime:/etc/localtime:ro
+      - uv-cache:/root/.cache/uv
+    restart: always
+    privileged: true
+    network_mode: host
+    working_dir: /app
+    environment:
+      - USERNAME=admin
+      - PASSWORD=esphome
+      - UV_PYTHON_CACHE_DIR=/root/.cache/uv/python
+    command: >
+      sh -c "
+      apt-get update && apt-get install -y curl &&
+      curl -LsSf https://astral.sh/uv/install.sh | sh &&
+      export PATH=\"/root/.local/bin:\$PATH\" &&
+      uv python install &&
+      uv pip install --system -r pyproject.toml &&
+      uv run esphome dashboard /config
+      "
+
+volumes:
+  uv-cache:
